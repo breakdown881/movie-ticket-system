@@ -54,27 +54,6 @@ export class CinemasService {
     });
   }
 
-  /**
-   * 📝 TASK 4.1 (DÀNH CHO MENTEE): SINH SƠ ĐỒ GHẾ TỰ ĐỘNG (GENERATE SEAT MATRIX)
-   *
-   * Quy trình cần làm:
-   * 1. Tìm Hall theo hallId (`const hall = await this.findHallById(hallId);`).
-   * 2. Kiểm tra xem Hall này đã có ghế nào chưa:
-   *    `const existingSeats = await this.seatRepository.count({ where: { hallId } });`
-   *    Nếu > 0 -> Ném ra `new ConflictException('Phòng chiếu này đã có ghế, vui lòng không sinh đè!')`.
-   * 3. Duyệt qua từng hàng trong `generateSeatsDto.rows` (ví dụ: ['A', 'B', 'C', 'D', 'E']):
-   *    - Duyệt qua số ghế từ `1` đến `generateSeatsDto.seatsPerRow`:
-   *      + Xác định loại ghế (`seatType`):
-   *        - Nếu `generateSeatsDto.coupleRows?.includes(row)` -> `SeatType.COUPLE`
-   *        - Ngược lại nếu `generateSeatsDto.vipRows?.includes(row)` -> `SeatType.VIP`
-   *        - Còn lại -> `SeatType.STANDARD`
-   *      + Tạo object ghế:
-   *        `this.seatRepository.create({ hallId, row, seatNumber: i, seatType })`
-   * 4. Lưu toàn bộ danh sách ghế vào DB: `await this.seatRepository.save(seats);`
-   * 5. Cập nhật `totalSeats` cho Hall:
-   *    `hall.totalSeats = seats.length; await this.hallRepository.save(hall);`
-   * 6. Trả về: `{ message: 'Sinh sơ đồ ghế thành công', totalSeats: seats.length, hall }`
-   */
   async generateSeats(
     hallId: string,
     generateSeatsDto: GenerateSeatsDto,
