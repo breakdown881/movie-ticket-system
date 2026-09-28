@@ -53,7 +53,7 @@ export class ReservationsService {
             .innerJoin('rs.reservation', 'r')
             .where('r.showtimeId = :showtimeId', { showtimeId })
             .andWhere('r.status = :status', { status: ReservationStatus.CONFIRMED })
-            .select('rs.SeatId')
+            .select('rs.seatId')
             .getMany()
         
         const confirmedSeatIds = new Set(confirmedReservationSeats.map((rs) => rs.seatId))
