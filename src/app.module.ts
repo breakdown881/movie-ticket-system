@@ -14,6 +14,7 @@ import { ShowtimesModule } from './modules/showtimes/showtimes.module.js';
 import { DiscountsModule } from './modules/discounts/discounts.module.js';
 import { RedisModule } from './modules/redis/redis.module.js';
 import { ReservationsModule } from './modules/reservations/reservations.module.js';
+import { PaymentsModule } from './modules/payments/payments.module.js';
 
 @Module({
   imports: [
@@ -34,7 +35,8 @@ import { ReservationsModule } from './modules/reservations/reservations.module.j
     ShowtimesModule,
     DiscountsModule,
     RedisModule,
-    ReservationsModule
+    ReservationsModule,
+    PaymentsModule
   ],
   controllers: [AppController],
   providers: [AppService],
