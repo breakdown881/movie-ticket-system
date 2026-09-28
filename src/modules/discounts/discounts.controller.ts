@@ -5,6 +5,10 @@ import {
   Body,
   Query,
   UseGuards,
+  Param,
+  ParseUUIDPipe,
+  Put,
+  Delete,
 } from '@nestjs/common';
 import {
   ApiTags,
@@ -19,6 +23,7 @@ import { Roles } from '../../common/decorators/roles.decorator.js';
 import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard.js';
 import { RolesGuard } from '../../common/guards/roles.guard.js';
 import { UserRole } from '../../common/constants/enums.js';
+import { UpdateDiscountDto } from './dto/update-discount.dto.js';
 
 @ApiTags('Discounts & Coupons')
 @Controller('discounts')
@@ -51,5 +56,34 @@ export class DiscountsController {
     @Body('orderAmount') orderAmount: number,
   ) {
     return this.discountsService.validateAndCalculateDiscount(code, orderAmount);
+  }
+
+  @ApiBearerAuth('JWT-auth')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(UserRole.ADMIN)
+  @Get(':id')
+  @ApiOperation({ summary: '[Admin] Get discount details by ID' })
+  findById(@Param('id', ParseUUIDPipe) id: string) {
+    return this.discountsService.findById(id)
+  }
+
+  @ApiBearerAuth('JWT-auth')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(UserRole.ADMIN)
+  @Put(':id')
+  @ApiOperation({ summary: '[Admin] Update discount code' })
+  update(
+    @Param('id', ParseUUIDPipe) id: string,
+    @Body() updateDiscountDto: UpdateDiscountDto,
+  ) {
+    return this.discountsService.update(id, updateDiscountDto);
+  }
+  @ApiBearerAuth('JWT-auth')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(UserRole.ADMIN)
+  @Delete(':id')
+  @ApiOperation({ summary: '[Admin] Delete a discount code' })
+  remove(@Param('id', ParseUUIDPipe) id: string) {
+    return this.discountsService.remove(id);
   }
 }

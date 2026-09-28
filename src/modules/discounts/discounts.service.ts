@@ -9,6 +9,7 @@ import { Repository } from 'typeorm';
 import { Discount } from './entities/discount.entity.js';
 import { CreateDiscountDto } from './dto/create-discount.dto.js';
 import { DiscountType } from '../../common/constants/enums.js';
+import { UpdateDiscountDto } from './dto/update-discount.dto.js';
 
 @Injectable()
 export class DiscountsService {
@@ -96,5 +97,77 @@ export class DiscountsService {
     const finalAmount = orderAmount - discountAmount;
 
     return { discount, discountAmount, finalAmount };
+  }
+
+  /**
+   * Tìm chi tiết 1 mã giảm giá theo ID
+   */
+  async findById(id: string): Promise<Discount> {
+    const discount = await this.discountRepository.findOne({ where: { id } })
+    if (!discount) {
+      throw new NotFoundException(`Discount with ID '${id}' not found`)
+    }
+    return discount
+  }
+
+  /**
+   * Cập nhật thông tin mã giảm giá
+   */
+  async update(id: string, dto: UpdateDiscountDto): Promise<Discount> {
+    const discount = await this.findById(id)
+
+    // Nếu Admin muốn đổi code, kiểm tra xem code mới có bị trùng với mã khác không
+    if (dto.code && dto.code.toUpperCase().trim() !== discount.code) {
+      const newCode = dto.code.toUpperCase().trim()
+      const existing = await this.discountRepository.findOne({ where: { code: newCode } })
+      
+      if (existing) {
+        throw new ConflictException(`Discount code '${newCode}' already exists`)
+      }
+      discount.code = newCode
+    }
+
+    if (dto.discountType) {
+      discount.discountType = dto.discountType
+    }
+
+    if (dto.discountValue !== undefined) {
+      discount.discountValue = dto.discountValue
+    }
+
+    if (dto.minOrderAmount !== undefined) {
+      discount.minOrderAmount = dto.minOrderAmount
+    }
+
+    if (dto.maxDiscountAmount !== undefined) {
+      discount.maxDiscountAmount = dto.maxDiscountAmount
+    }
+
+    if (dto.startDate) {
+      discount.startDate = new Date(dto.startDate)
+    }
+
+    if (dto.endDate) {
+      discount.endDate = new Date(dto.endDate)
+    }
+
+    if (dto.usageLimit !== undefined) {
+      discount.usageLimit = dto.usageLimit
+    }
+
+    if (dto.isActive !== undefined) {
+       discount.isActive = dto.isActive
+    }
+
+    return this.discountRepository.save(discount)
+  }
+
+  /**
+   * Xóa mã giảm giá
+   */
+  async remove(id: string): Promise<{ message: string }> {
+    const discount = await this.findById(id)
+    await this.discountRepository.remove(discount)
+    return {message: `Discount code '${discount.code}' deleted successfully`}
   }
 }
