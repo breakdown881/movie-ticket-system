@@ -1,7 +1,7 @@
 import { Column, Entity, Index, JoinColumn, OneToOne } from "typeorm";
 import { BaseAppEntity } from "../../../common/entities/base.entity.js";
 import { ClientPlatform, PaymentMethod, PaymentStatus } from "../../../common/constants/enums.js";
-import { Reservation } from "../../reservations/entities/reservation.entity.js";
+import { type Reservation } from "../../reservations/entities/reservation.entity.js";
 
 @Entity('payments')
 export class Payment extends BaseAppEntity {

@@ -256,11 +256,14 @@ Once started, visit Swagger UI:
 | **Users** | `GET` | `/api/v1/users` | Admin | List all registered users |
 | **Users** | `PATCH`| `/api/v1/users/:id/role` | Admin | Promote or modify user role |
 | **Movies**| `CRUD`| `/api/v1/movies` | Admin/Public | Manage movies catalog & genres |
-| **Halls** | `CRUD`| `/api/v1/halls` | Admin | Manage cinema halls and seat layouts |
-| **Showtimes** | `CRUD` | `/api/v1/showtimes` | Admin/Public | Schedule movie showtimes (Anti-conflict) |
-| **Reservations** | `POST` | `/api/v1/reservations/hold` | User | Temporarily hold seats (10m TTL) |
-| **Payments** | `POST` | `/api/v1/payments/checkout` | User | MoMo / VNPay / Bank transfer checkout |
-| **Reports** | `GET` | `/api/v1/reporting/movies/:id` | Admin | Movie lifetime revenue & ticket stats |
+| **Movies**| `GET` | `/api/v1/movies/:id/statistics` | Public | Lifetime box office revenue & ticket count |
+| **Cinemas**| `CRUD`| `/api/v1/cinemas/halls` | Admin | Manage cinema halls and seat layouts |
+| **Showtimes** | `CRUD` | `/api/v1/showtimes` | Admin/Public | Schedule showtimes (with anti-conflict logic) |
+| **Discounts** | `CRUD` | `/api/v1/discounts` | Admin | Manage discount codes, percentages & limits |
+| **Reservations** | `GET` | `/api/v1/reservations/showtimes/:id/seats` | Public | Real-time seat layout (`AVAILABLE`, `HELD`, `CONFIRMED`) |
+| **Reservations** | `POST` | `/api/v1/reservations/hold` | User | Temporarily hold seats (10m TTL via Redis Lock & DLX) |
+| **Reservations** | `PATCH`| `/api/v1/reservations/:id/cancel` | User | Cancel reservation & release held seats |
+| **Payments** | `POST` | `/api/v1/payments/checkout` | User | Complete payment (VNPay/Momo/Bank) & confirm tickets |
 
 ---
 
