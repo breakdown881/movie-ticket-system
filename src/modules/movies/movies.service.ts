@@ -9,6 +9,7 @@ import { Movie } from './entities/movie.entity.js';
 import { Genre } from './entities/genre.entity.js';
 import { CreateGenreDto } from './dto/create-genre.dto.js';
 import { CreateMovieDto } from './dto/create-movie.dto.js';
+import { title } from 'process';
 
 @Injectable()
 export class MoviesService {
@@ -112,5 +113,37 @@ export class MoviesService {
     const movie = await this.findMovieById(id);
     await this.movieRepository.remove(movie);
     return { message: `Movie '${movie.title}' deleted successfully` };
+  }
+
+  /**
+   * Thống kê tổng số vé đã bán và tổng doanh thu của một bộ phim
+   */
+  async getMovieStatistics(movieId: string) {
+    const movie = await this.findMovieById(movieId)
+
+    // Dùng QueryBuilder để JOIN các bảng và tính toán tổng số vé và tổng tiền
+    const stats = await this.movieRepository.manager
+      .createQueryBuilder()
+      .select('COUNT(rs.id)', 'totalTickets')
+      .addSelect('COALESCE(SUM(rs.price), 0)', 'totalRevenue')
+      .from('reservation_seats', 'rs')
+      .innerJoin('reservations', 'r', 'r.id = rs.reservation_id')
+      .innerJoin('showtimes', 's', 's.id = r.showtime_id')
+      .where('s.movie_id = :movieId', { movieId })
+      .andWhere('r.status = :status', { status: 'CONFIRMED' })
+      .getRawOne()
+    
+    return {
+      movie: {
+        id: movie.id,
+        title: movie.title,
+        releaseDate: movie.releaseDate,
+        endDate: movie.endDate
+      },
+      statistics: {
+        totalTicketsSold: Number(stats.totalTickets || 0),
+        totalRevenue: Number(stats.totalRevenue || 0)
+      }
+    }
   }
 }

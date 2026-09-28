@@ -57,6 +57,13 @@ export class MoviesController {
   }
 
   @Public()
+  @Get(':id/statistics')
+  @ApiOperation({ summary: 'Thống kê tổng số vé bán ra và doanh thu trọn đời của bộ phim' })
+  getMovieStatistics(@Param('id', ParseUUIDPipe) id: string) {
+    return this.moviesService.getMovieStatistics(id)
+  }
+
+  @Public()
   @Get(':id')
   @ApiOperation({ summary: 'Get details of a specific movie' })
   findMovieById(@Param('id', ParseUUIDPipe) id: string) {
