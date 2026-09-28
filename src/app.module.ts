@@ -13,6 +13,7 @@ import { CinemasModule } from './modules/cinemas/cinemas.module.js';
 import { ShowtimesModule } from './modules/showtimes/showtimes.module.js';
 import { DiscountsModule } from './modules/discounts/discounts.module.js';
 import { RedisModule } from './modules/redis/redis.module.js';
+import { ReservationsModule } from './modules/reservations/reservations.module.js';
 
 @Module({
   imports: [
@@ -33,6 +34,7 @@ import { RedisModule } from './modules/redis/redis.module.js';
     ShowtimesModule,
     DiscountsModule,
     RedisModule,
+    ReservationsModule
   ],
   controllers: [AppController],
   providers: [AppService],

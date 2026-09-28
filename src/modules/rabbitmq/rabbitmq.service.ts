@@ -11,6 +11,9 @@ export const CINEMA_EXCHANGE = 'cinema.events';
 export const EMAIL_QUEUE = 'cinema.email.queue';
 export const EMAIL_ROUTING_KEY_LOGIN = 'email.login_alert';
 export const EMAIL_ROUTING_KEY_RESET = 'email.reset_password';
+export const HOLD_DELAY_QUEUE = 'cinema.hold.delay.queue';
+export const RESERVATION_EXPIRED_QUEUE = 'cinema.reservation.expired.queue';
+export const ROUTING_KEY_RESERVATION_EXPIRED = 'reservation.expired';
 
 @Injectable()
 export class RabbitMQService implements OnModuleInit, OnModuleDestroy {
@@ -42,6 +45,22 @@ export class RabbitMQService implements OnModuleInit, OnModuleDestroy {
         durable: true,
       });
 
+      await this.channel.assertQueue(HOLD_DELAY_QUEUE, {
+        durable: true,
+        deadLetterExchange: CINEMA_EXCHANGE,
+        deadLetterRoutingKey: ROUTING_KEY_RESERVATION_EXPIRED,
+        messageTtl: 600000
+      })
+
+      await this.channel.assertQueue(RESERVATION_EXPIRED_QUEUE, { durable: true })
+      await this.channel.bindQueue(
+        RESERVATION_EXPIRED_QUEUE,
+        CINEMA_EXCHANGE,
+        ROUTING_KEY_RESERVATION_EXPIRED
+      )
+
+      
+
       // Khởi tạo Queue nhận email
       await this.channel.assertQueue(EMAIL_QUEUE, {
         durable: true,
@@ -68,6 +87,16 @@ export class RabbitMQService implements OnModuleInit, OnModuleDestroy {
     } catch (err) {
       this.logger.error('Error disconnecting from RabbitMQ', err);
     }
+  }
+
+  /**
+  * Gửi vé vào hàng đợi chờ 10 phút (gửi thẳng vào queue default exchange "")
+  */
+  async sendToDelayQueue(queueName: string, message: any): Promise<boolean> {
+    if (!this.channel) return false
+
+    const payload = Buffer.from(JSON.stringify(message))
+    return this.channel.sendToQueue(queueName, payload, { persistent: true })
   }
 
   /**
