@@ -262,8 +262,11 @@ Once started, visit Swagger UI:
 | **Discounts** | `CRUD` | `/api/v1/discounts` | Admin | Manage discount codes, percentages & limits |
 | **Reservations** | `GET` | `/api/v1/reservations/showtimes/:id/seats` | Public | Real-time seat layout (`AVAILABLE`, `HELD`, `CONFIRMED`) |
 | **Reservations** | `POST` | `/api/v1/reservations/hold` | User | Temporarily hold seats (10m TTL via Redis Lock & DLX) |
-| **Reservations** | `PATCH`| `/api/v1/reservations/:id/cancel` | User | Cancel reservation & release held seats |
-| **Payments** | `POST` | `/api/v1/payments/checkout` | User | Complete payment (VNPay/Momo/Bank) & confirm tickets |
+| **Payments** | `POST` | `/api/v1/payments/checkout` | User | Direct / Sandbox mock checkout |
+| **Payments** | `POST` | `/api/v1/payments/create-url` | User | Generate signed payment URL (VNPay / MoMo) |
+| **Payments** | `GET`  | `/api/v1/payments/vnpay/ipn` | Public | VNPay Server-to-Server IPN Webhook callback |
+| **Payments** | `GET`  | `/api/v1/payments/vnpay/return` | Public | VNPay customer browser redirect landing page |
+| **Payments** | `POST` | `/api/v1/payments/momo/ipn` | Public | MoMo Server-to-Server IPN Webhook callback |
 
 ---
 
