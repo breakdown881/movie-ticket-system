@@ -1,0 +1,25 @@
+# Dependencies & Build artifacts
+node_modules
+dist
+npm-debug.log *
+
+# Git & CI / CD
+.git
+.gitignore
+.github
+
+# Environment Variables & Secrets(Bảo mật tuyệt đối không cho vào Image)
+.env
+.env.*
+!.env.example
+
+# Tests & Coverage
+test
+vitest.config*.ts
+coverage
+
+# IDE & OS temporary files
+.vscode
+.idea
+.DS_Store
+Thumbs.db
